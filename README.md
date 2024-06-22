@@ -66,3 +66,33 @@ otherwise push loggedInUserId in like array
 # in route
 
 router.route("/likeOrDislike/:id").put(isAuth ,LikeOrDislike);
+
+# Bookmarks
+
+as like as like or dislike api
+
+# in router
+
+router.route("/bookmark/:id").put(isAuth, Bookmarks);
+
+
+# GetMyProfile
+
+let id = req.params.id;
+let user = await User.findById(id);
+
+    return res.status(200).json({
+      user,
+    });
+
+# in route
+
+router.route("/profile/:id").get(isAuth, GetMyProfile);
+
+# GetOtherUsers
+
+    myId is not equal other id
+    let otherUser = await User.find({ _id: { $ne: myId } }).select("-email, -password");
+
+# in router
+router.route("/otheruser/:id").get(isAuth, GetOtherUser);

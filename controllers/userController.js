@@ -104,3 +104,73 @@ export let Logout = (req, res) => {
     console.log(error);
   }
 };
+
+export let Bookmarks = async (req, res) => {
+  try {
+    let loggedinUser = req.body.id;
+    let tweetId = req.params.id;
+
+    let user = await User.findById(loggedinUser);
+
+    if (user.bookmark.includes(tweetId)) {
+      // dislike (pull)
+      await User.findByIdAndUpdate(loggedinUser, {
+        $pull: { bookmark: tweetId },
+      });
+      return res.status(201).json({
+        massage: "user unBookmark your tweet",
+        success: true,
+      });
+    } else {
+      await User.findByIdAndUpdate(loggedinUser, {
+        $push: { bookmark: tweetId },
+      });
+      return res.status(201).json({
+        massage: "user bookmark your tweet",
+        success: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export let GetMyProfile = async (req, res) => {
+  try {
+    let id = req.params.id;
+    let user = await User.findById(id).select("-password, -email");
+
+    return res.status(200).json({
+      user,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export let GetOtherUser = async (req, res) => {
+  try {
+    let myId = req.params.id;
+
+    // myId is not equal other id
+    let otherUser = await User.find({ _id: { $ne: myId } }).select(
+      "-email, -password"
+    );
+    console.log(otherUser);
+
+    if (!otherUser) {
+      return res.status(401).json({
+        massage: "Currently you doen't have any user",
+      });
+    }
+    return res.status(201).json({
+      otherUser,
+      success:true
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+
+
