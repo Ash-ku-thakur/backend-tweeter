@@ -1,6 +1,7 @@
 import express from "express";
 import {
   Bookmarks,
+  Follow,
   GetMyProfile,
   GetOtherUser,
   Login,
@@ -17,5 +18,6 @@ router.route("/logout").get(Logout);
 router.route("/bookmark/:id").put(isAuth, Bookmarks);
 router.route("/profile/:id").get(isAuth, GetMyProfile);
 router.route("/otheruser/:id").get(isAuth, GetOtherUser);
+router.route("/follow/:id").put(isAuth, Follow);
 
 export default router;

@@ -165,12 +165,54 @@ export let GetOtherUser = async (req, res) => {
     }
     return res.status(201).json({
       otherUser,
-      success:true
+      success: true,
     });
   } catch (error) {
     console.log(error);
   }
 };
 
+export let Follow = async (req, res) => {
+  try {
+    let loggedinUserId = req.body.id; // logged in user
+    let likedPerson = req.params.id; // followed by user
 
+    // find who follows and who to follows
+    let loggedinUser = await User.findById(loggedinUserId);
+    let likedUser = await User.findById(likedPerson);
 
+    // user cann't follow yourself
+    if (loggedinUserId == likedPerson) {
+      return res.status(401).json({
+        massage: "You cann't follow yourself",
+      });
+    }
+
+    // if not follow then follow and wise versa
+    if (!loggedinUser.following.includes(likedPerson)) {
+      await User.findByIdAndUpdate(likedPerson, {
+        $push: { followers: loggedinUserId },
+      }).select("-password");
+      await User.findByIdAndUpdate(loggedinUserId, {
+        $push: { following: likedPerson },
+      }).select("-password");
+      return res.status(201).json({
+        massage: `${loggedinUser.name} just followed ${likedUser.name}`,
+        success: true,
+      });
+    } else {
+      await User.findByIdAndUpdate(likedPerson, {
+        $pull: { followers: loggedinUserId },
+      }).select("-password");
+      await User.findByIdAndUpdate(loggedinUserId, {
+        $pull: { following: likedPerson },
+      }).select("-password");
+      return res.status(201).json({
+        massage: `${loggedinUser.name} just unFollowed ${likedUser.name}`,
+        success: true,
+      });
+    }
+  } catch (error) {
+    console.log(error);
+  }
+};

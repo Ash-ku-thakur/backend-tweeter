@@ -75,7 +75,6 @@ as like as like or dislike api
 
 router.route("/bookmark/:id").put(isAuth, Bookmarks);
 
-
 # GetMyProfile
 
 let id = req.params.id;
@@ -95,4 +94,35 @@ router.route("/profile/:id").get(isAuth, GetMyProfile);
     let otherUser = await User.find({ _id: { $ne: myId } }).select("-email, -password");
 
 # in router
+
 router.route("/otheruser/:id").get(isAuth, GetOtherUser);
+
+# Follow or unFollow
+
+    let loggedinUserId = req.body.id; // logged in user
+    let likedPerson = req.params.id; // followed by user
+
+    // find who follows and who to follows
+    let loggedinUser = await User.findById(loggedinUserId);
+    let likedUser = await User.findById(likedPerson);
+
+# user cann't follow yourself
+
+    if (loggedinUserId == likedPerson) {
+      return res.status(401).json({
+        massage: "You cann't follow yourself",
+      });
+    }
+
+await User.findByIdAndUpdate(likedPerson, {
+$push: { followers: loggedinUserId },
+}).select("-password");
+await User.findByIdAndUpdate(loggedinUserId, {
+$push: { following: likedPerson },
+}).select("-password");
+
+      And wise versa for un follow only push change to pull
+
+# in router
+
+router.route("/follow/:id").put(isAuth, Follow);
