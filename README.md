@@ -126,3 +126,38 @@ $push: { following: likedPerson },
 # in router
 
 router.route("/follow/:id").put(isAuth, Follow);
+
+# GetAllTweets (loggedinUser's tweet + following tweets)
+
+<!-- loggedinUser's tweet -->
+
+let loggedinUserId = req.body.id;
+let loggedinUser = await User.findById(loggedinUserId);
+let loggedinUserTweets = await Tweet.find({ userId: loggedinUserId });
+
+<!-- following tweets -->
+
+# Promise.all()
+
+we have to use map of loggedinUser's following(it is an array).
+we got multipal ids of following users, and we want to get all tweets of every following user's id that is why we have to use Peomise.all() and put all the logis into it
+
+let followingUserTweet = await Promise.all(
+loggedinUser.following.map((otherUser) => {
+return Tweet.find({ userId: otherUser });
+})
+);
+
+and return loggedinUserTweets + followingUserTweet
+
+# in router
+
+router.route("/getTweets").get(isAuth, GetAllTweets);
+
+# GetFollowingTweets
+
+as like as we did on GetAllTweets only different we donn't want to return loggedinUser's tweet
+
+# in router
+
+router.route("/followingTweets").get(isAuth, GetFollowingTweets);
