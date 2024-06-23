@@ -2,6 +2,7 @@ import User from "../models/userSchema.js";
 import bcryptjs from "bcryptjs";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import Tweet from "../models/tweetSchema.js";
 
 dotenv.config({
   path: "../controllers/.env",
@@ -216,3 +217,5 @@ export let Follow = async (req, res) => {
     console.log(error);
   }
 };
+
+

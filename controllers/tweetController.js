@@ -20,8 +20,24 @@ export let CreateTweet = async (req, res) => {
       userId: id,
     });
 
+    // FindUserTweets
+    let loggedinUser = await User.findById(id);
+    let loggedinUserTweets = await Tweet.find({ userId: id });
+
+    // loggedinUser ke tweets Array me loggedinUser ki tweets ko push kiya ja raha hai
+    let tweetsIdPushedInLogedinUserTweets = await Promise.all(
+      loggedinUserTweets.map(async (tweetId) => {
+        if (!loggedinUser.tweets.includes(tweetId._id)) {
+          return await User.findByIdAndUpdate(id, {
+            $push: { tweets: tweetId._id },
+          });
+        }
+      })
+    );
+
     return res.status(201).json({
       massage: "Tweet Created Successfully",
+      tweetsIdPushedInLogedinUserTweets,
       success: true,
     });
   } catch (error) {

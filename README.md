@@ -142,11 +142,10 @@ let loggedinUserTweets = await Tweet.find({ userId: loggedinUserId });
 we have to use map of loggedinUser's following(it is an array).
 we got multipal ids of following users, and we want to get all tweets of every following user's id that is why we have to use Peomise.all() and put all the logis into it
 
-let followingUserTweet = await Promise.all(
-loggedinUser.following.map((otherUser) => {
-return Tweet.find({ userId: otherUser });
-})
-);
+  let followingUserTweet = await Promise.all(loggedinUser.following.map((otherUser) => {
+     return Tweet.find({ userId: otherUser });
+    })
+   );
 
 and return loggedinUserTweets + followingUserTweet
 
@@ -161,3 +160,19 @@ as like as we did on GetAllTweets only different we donn't want to return logged
 # in router
 
 router.route("/followingTweets").get(isAuth, GetFollowingTweets);
+
+# change in CreateTweet Api 
+basicaly after creating the tweet i am puhing tweet._id into loggedinUser's tweets Array
+ with the help of Promise.all()
+
+first we find all loggedinUserTweets then map on it,
+
+ let tweetsIdPushedInLogedinUserTweets = await Promise.all(
+      loggedinUserTweets.map(async (tweetId) => {
+        if (!loggedinUser.tweets.includes(tweetId._id)) {
+          return await User.findByIdAndUpdate(id, {
+            $push: { tweets: tweetId._id },
+          });
+        }
+      })
+    );
