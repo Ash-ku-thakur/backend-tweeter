@@ -10,10 +10,11 @@ import { isAuth } from "../config/auth.js";
 
 let router = express.Router();
 
-router.route("/create").post(isAuth, CreateTweet);
-router.route("/delete/:id").delete(isAuth, DeleteTweet);
-router.route("/likeOrDislike/:id").put(isAuth, LikeOrDislike);
-router.route("/getTweets").get(isAuth, GetAllTweets);
-router.route("/followingTweets").get(isAuth, GetFollowingTweets);
+// isAuth
+router.route("/create").post(CreateTweet);
+router.route("/delete/:id").delete(DeleteTweet);
+router.route("/likeOrDislike/:id").put(LikeOrDislike);
+router.route("/getTweets/:id").get(GetAllTweets);
+router.route("/followingTweets").get(GetFollowingTweets);
 
 export default router;

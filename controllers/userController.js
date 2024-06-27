@@ -85,10 +85,15 @@ export let Login = async (req, res) => {
 
     return res
       .status(201)
-      .cookie("token", token, { expiresIn: "id" })
+      .cookie("auth_token", token, {
+        httpOnly: true,
+        secure: true,
+      })
       .json({
         massage: `Welcome back ${user.name}`,
         success: true,
+        cok: token,
+        user,
       });
   } catch (error) {
     console.log(error);
@@ -139,9 +144,11 @@ export let Bookmarks = async (req, res) => {
 export let GetMyProfile = async (req, res) => {
   try {
     let id = req.params.id;
-    let user = await User.findById(id).select("-password, -email");
+    let user = await User.findById(id);
 
     return res.status(200).json({
+      massage: "All right",
+      success: true,
       user,
     });
   } catch (error) {
@@ -217,5 +224,3 @@ export let Follow = async (req, res) => {
     console.log(error);
   }
 };
-
-

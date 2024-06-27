@@ -15,13 +15,14 @@ export let CreateTweet = async (req, res) => {
     }
 
     // Tweet create
+    let loggedinUser = await User.findById(id);
     await Tweet.create({
       description,
       userId: id,
+      userDetails: loggedinUser,
     });
 
     // FindUserTweets
-    let loggedinUser = await User.findById(id);
     let loggedinUserTweets = await Tweet.find({ userId: id });
 
     // loggedinUser ke tweets Array me loggedinUser ki tweets ko push kiya ja raha hai
@@ -37,7 +38,6 @@ export let CreateTweet = async (req, res) => {
 
     return res.status(201).json({
       massage: "Tweet Created Successfully",
-      tweetsIdPushedInLogedinUserTweets,
       success: true,
     });
   } catch (error) {
@@ -95,7 +95,7 @@ export let LikeOrDislike = async (req, res) => {
 export let GetAllTweets = async (req, res) => {
   try {
     // loggedinUser + following user's tweets
-    let loggedinUserId = req.body.id;
+    let loggedinUserId = req.params.id;
     let loggedinUser = await User.findById(loggedinUserId);
     let loggedinUserTweets = await Tweet.find({ userId: loggedinUserId });
 

@@ -176,3 +176,7 @@ first we find all loggedinUserTweets then map on it,
         }
       })
     );
+
+
+# miner cahnges 
+insert a new field in tweetSchema (like userDetails)
