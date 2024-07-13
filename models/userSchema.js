@@ -24,12 +24,10 @@ const userSchema = new mongoose.Schema(
       default: [],
     },
     followers: {
-      type: Array,
-      default: [],
+      type: [String],
     },
     following: {
-      type: Array,
-      default: [],
+     type:[String]
     },
     bookmark: {
       type: Array,

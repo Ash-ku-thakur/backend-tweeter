@@ -7,6 +7,7 @@ import {
   Login,
   Logout,
   Register,
+  UnFollow,
 } from "../controllers/userController.js";
 import { isAuth } from "../config/auth.js";
 
@@ -20,5 +21,6 @@ router.route("/bookmark/:id").put(Bookmarks);
 router.route("/profile/:id").get(GetMyProfile);
 router.route("/otheruser/:id").get(GetOtherUser);
 router.route("/follow/:id").put(Follow);
+router.route("/unfollow/:id").put(UnFollow);
 
 export default router;

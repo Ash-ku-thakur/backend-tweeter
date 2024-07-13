@@ -32,7 +32,7 @@ export let Register = async (req, res) => {
     // account creating with hash password
     let hashPassword = await bcryptjs.hash(password, 10);
 
-    await User.create({
+    let createdUser = await User.create({
       name,
       userName,
       email,
@@ -41,6 +41,7 @@ export let Register = async (req, res) => {
     return res.status(201).json({
       massage: "Account Created Successfully",
       success: true,
+      user: createdUser,
     });
   } catch (error) {
     console.log(error);
@@ -164,7 +165,7 @@ export let GetOtherUser = async (req, res) => {
     let otherUser = await User.find({ _id: { $ne: myId } }).select(
       "-email, -password"
     );
-    console.log(otherUser);
+    // console.log(otherUser);
 
     if (!otherUser) {
       return res.status(401).json({
@@ -172,8 +173,9 @@ export let GetOtherUser = async (req, res) => {
       });
     }
     return res.status(201).json({
-      otherUser,
+      massage: "all other Users",
       success: true,
+      otherUser,
     });
   } catch (error) {
     console.log(error);
@@ -196,7 +198,7 @@ export let Follow = async (req, res) => {
       });
     }
 
-    // if not follow then follow and wise versa
+    //  following logic
     if (!loggedinUser.following.includes(likedPerson)) {
       await User.findByIdAndUpdate(likedPerson, {
         $push: { followers: loggedinUserId },
@@ -204,22 +206,45 @@ export let Follow = async (req, res) => {
       await User.findByIdAndUpdate(loggedinUserId, {
         $push: { following: likedPerson },
       }).select("-password");
-      return res.status(201).json({
-        massage: `${loggedinUser.name} just followed ${likedUser.name}`,
-        success: true,
+    }
+    return res.status(201).json({
+      massage: `${loggedinUser.name} just followed ${likedUser.name}`,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+};
+
+export let UnFollow = async (req, res) => {
+  try {
+    let loggedinUserId = req.body.id; // logged in user
+    let likedPerson = req.params.id; // followed by user
+
+    // find who follows and who to follows
+    let loggedinUser = await User.findById(loggedinUserId);
+    let likedUser = await User.findById(likedPerson);
+
+    // user cann't follow yourself
+    if (loggedinUserId == likedPerson) {
+      return res.status(401).json({
+        massage: "You cann't follow yourself",
       });
-    } else {
+    }
+
+    //  following logic
+    if (loggedinUser.following.includes(likedPerson)) {
       await User.findByIdAndUpdate(likedPerson, {
         $pull: { followers: loggedinUserId },
       }).select("-password");
       await User.findByIdAndUpdate(loggedinUserId, {
         $pull: { following: likedPerson },
       }).select("-password");
-      return res.status(201).json({
-        massage: `${loggedinUser.name} just unFollowed ${likedUser.name}`,
-        success: true,
-      });
     }
+    return res.status(201).json({
+      massage: `${loggedinUser.name} just unFollowed ${likedUser.name}`,
+      success: true,
+    });
   } catch (error) {
     console.log(error);
   }

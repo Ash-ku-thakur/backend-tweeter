@@ -116,17 +116,21 @@ export let GetAllTweets = async (req, res) => {
 // getFollowingTweets
 export let GetFollowingTweets = async (req, res) => {
   try {
-    let loggedinUserId = req.body.id;
+    let loggedinUserId = req.params.id;
     let loggedinUser = await User.findById(loggedinUserId);
-    // let loggedinUserTweets = await Tweet.find({ userId: loggedinUserId });
 
+    // console.log(loggedinUser);
+    // let loggedinUserTweets = await Tweet.find({ userId: loggedinUserId });
     let followingUserTweet = await Promise.all(
       loggedinUser.following.map((otherUser) => {
         return Tweet.find({ userId: otherUser });
       })
     );
 
+    // console.log(loggedinUser);
     return res.status(201).json({
+      massage: "get all following user's tweets",
+      success: true,
       tweets: followingUserTweet,
     });
   } catch (error) {

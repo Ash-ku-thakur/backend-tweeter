@@ -14,11 +14,11 @@ databaseConnection();
 let app = express();
 
 // middelwares
-// let corsOption = {
-//   origin: "http://localhost:3000",
-//   withCredentials: true,
-// };
-app.use(cors());
+let corsOption = {
+  origin: "http://localhost:3000",
+  withCredentials: true,
+};
+app.use("*",cors(corsOption));
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());

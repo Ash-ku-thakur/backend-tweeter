@@ -12,13 +12,13 @@ const tweetSchema = new mongoose.Schema(
     },
 
     userId: {
-      type: mongoose.Schema.Types.ObjectId,
+      type: [String],
       ref: "User",
     },
     userDetails: {
       type: Array,
       default: [],
-    }
+    },
   },
   { timestamps: true }
 );
